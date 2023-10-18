@@ -14,18 +14,18 @@ public class FileService {
     private String UPLOAD_DIR;
     public String uploadImage(String path, MultipartFile file) throws IOException {
         String name = file.getOriginalFilename();
-        String randomId = UUID.randomUUID().toString();
-        String fileName = randomId.concat(name.substring(name.lastIndexOf(".")));
+//        String randomId = UUID.randomUUID().toString();
+//        String fileName = randomId.concat(name.substring(name.lastIndexOf(".")));
         File directory = new File(UPLOAD_DIR +path );
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String filePath =  directory.getPath() + File.separator + fileName;
+        String filePath =  directory.getPath() + File.separator + name;
         file.transferTo(new File(filePath));
-        return fileName;
+        return name;
     }
     public InputStream getResource(String path, String fileName) throws FileNotFoundException {
-        String fullPath = path + File.separator + fileName;
+        String fullPath = UPLOAD_DIR + path + File.separator + fileName;
         InputStream is = new FileInputStream(fullPath);
         return is;
     }

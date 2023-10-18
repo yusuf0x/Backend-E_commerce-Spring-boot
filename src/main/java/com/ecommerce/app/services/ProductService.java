@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -61,7 +62,6 @@ public class ProductService {
         product.setRatingsQuantity(createProduct.getRatingsQuantity());
         String image = fileService.uploadImage("/products/"+createProduct.getCodeProduct(),imageCover);
         product.setImageCover(image);
-        product.setImageCover("");
         List<String> files = images.stream().map(
                 file -> {
                     try {
@@ -74,10 +74,14 @@ public class ProductService {
         product.setImages(files);
         Category category = categoryService.getCategoryById(createProduct.getCategoryId());
         product.setCategory(category);
-        List<SubCategory> subCategories = createProduct.getSubcategoryIds().stream().map(
-                id -> subCategoryService.getSubCategoryById(id)
-        ).toList();
-        product.setSubcategories(subCategories);
+        if(!createProduct.getSubcategoryIds().isEmpty()) {
+            List<SubCategory> subCategories = createProduct.getSubcategoryIds().stream().map(
+                    id -> subCategoryService.getSubCategoryById(id)
+            ).toList();
+            product.setSubcategories(subCategories);
+        }else{
+            product.setSubcategories(Arrays.asList());
+        }
         product.setBrand(brandService.getBrandById(createProduct.getBrandId()));
         return productRepository.save(product);
     }
